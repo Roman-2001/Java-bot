@@ -1,10 +1,11 @@
 public class Player {
     Integer point;
-    String lastPhrase;
-    String word;
+    String expectedAnswer;
+    String lastQuestion;
+
     Player(){
         this.point = 0;
-        this.lastPhrase = "";
-        this.word = "";
+        this.expectedAnswer = "";
+        this.lastQuestion = "";
     }
 }
