@@ -1,7 +1,7 @@
 import java.util.Random;
 
 public class Game {
-    static String[][] gloss = {
+    String[][] gloss = {
             {"стол", "table"},
             {"чай", "tea"},
             {"кофе", "coffee"},
@@ -9,7 +9,7 @@ public class Game {
             {"окно", "window"}
     };
 
-    public static String play (String message, Player player) {
+    public String play (String message, Player player) {
         Random random = new Random();
         String result = "";
         int number = random.nextInt(5);

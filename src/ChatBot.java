@@ -1,25 +1,26 @@
 import java.util.*;
 
 public class ChatBot {
-    static Map<Integer,Player> players = new HashMap<Integer, Player>();
-    static String help = "Я бот, умею выдавать русское слово,\nполучать перевод слова на английском " +
-            "и оценивать корректность перевода\nЧтобы начать игру, введите \"играть\"" +
+    Map<String,Player> players = new HashMap<String, Player>();
+    String help = "Я бот, умею выдавать русское слово,\nполучать перевод слова на английском " +
+            "и оценивать корректность перевода\nЧтобы начать игру, введите \"/play\"" +
             "\nЧтобы вывести справку, введите \"help\"";
-    public static String getMessage(String message, Integer id) {
+    public String getMessage(String message, String id) {
+        Game game = new Game();
         switch (message) {
-            case "играть":
+            case "/play":
                 if (!players.containsKey((id))) {
                     players.put(id, new Player());
-                    return Game.play("", players.get(id));
+                    return game.play("", players.get(id));
                 }
                 else return players.get(id).lastQuestion;
-            case "help":
+            case "/help":
                 return help;
             default:
-                if (id == 0)
-                    return "Чтобы начать игру, введите \"играть\"";
+                if (id.equals(""))
+                    return "Чтобы начать игру, введите \"/play\"";
                 else {
-                    return Game.play(message, players.get(id));
+                    return game.play(message, players.get(id));
                 }
         }
     }
