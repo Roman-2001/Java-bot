@@ -7,7 +7,11 @@ public class ChatBot {
             "\nЧтобы вывести справку, введите \"help\"";
     public String getMessage(String message, String id) {
         Game game = new Game();
+        message = message.toLowerCase();
         switch (message) {
+            case "/start":
+                return "Чтобы начать игру, введите \"/play\"" +
+                    "\nЧтобы вывести справку, введите \"help\"";
             case "/play":
                 if (!players.containsKey((id))) {
                     players.put(id, new Player());

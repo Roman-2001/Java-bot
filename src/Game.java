@@ -26,6 +26,9 @@ public class Game {
         player.lastQuestion = gloss[number][0];
         player.expectedAnswer = gloss[number][1];
         return result +"счёт:" + player.point + "\n" + player.lastQuestion;
+
+        //getClass().getResource() - чтение данных из файла
+        //подключить через ggogledoc.
     }
 
 }

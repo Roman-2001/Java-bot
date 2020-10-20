@@ -3,37 +3,27 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 import java.util.Scanner;
 
 public class Main extends TelegramLongPollingBot {
+    private ChatBot chatBot = new ChatBot();
     public static void main(String[] args) throws TelegramApiRequestException {
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
-        botsApi.registerBot(new Main());
-
-//        System.out.println("Привет!");
-//        String h = new ChatBot().help;
-//        System.out.println(h);
-//        ChatBot chat = new ChatBot();
-//        String id = "";
-//        while (true) {
-//            Scanner a = new Scanner(System.in);
-//            String message = a.next();
-//            if (message.equals("играть")) {
-//                System.out.println("Введите числовой индентификатор");
-//                id = a.next();
-//            }
-//            System.out.println(chat.getMessage(message, id));
-//        }
+        try {
+            botsApi.registerBot(new Main());
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-        ChatBot chat = new ChatBot();
         String message = update.getMessage().getText();
-        String res = chat.getMessage(message, update.getMessage().getChatId().toString());
+        String res = chatBot.getMessage(message, update.getMessage().getChatId().toString());
         sendMsg(update.getMessage().getChatId().toString(), res);
     }
 
@@ -42,6 +32,11 @@ public class Main extends TelegramLongPollingBot {
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(chatId);
         sendMessage.setText(s);
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
