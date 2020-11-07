@@ -28,7 +28,7 @@ public class Game {
         return result +"счёт:" + player.point + "\n" + player.lastQuestion;
 
         //getClass().getResource() - чтение данных из файла
-        //подключить через ggogledoc.
+        //подключить через googledoc.
     }
 
 }

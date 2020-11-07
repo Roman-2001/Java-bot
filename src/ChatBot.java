@@ -4,7 +4,7 @@ public class ChatBot {
     Map<String,Player> players = new HashMap<String, Player>();
     String help = "Я бот, умею выдавать русское слово,\nполучать перевод слова на английском " +
             "и оценивать корректность перевода\nЧтобы начать игру, введите \"/play\"" +
-            "\nЧтобы вывести справку, введите \"help\"";
+            "\nЧтобы вывести справку, введите \"/help\"";
     public String getMessage(String message, String id) {
         Game game = new Game();
         message = message.toLowerCase();
