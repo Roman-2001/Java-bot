@@ -6,14 +6,14 @@ public class ChatBot {
     Map<String,Player> players = new HashMap<String, Player>();
     String help = "Я бот, умею выдавать русское слово,\nполучать перевод слова на английском " +
             "и оценивать корректность перевода\nЧтобы начать игру, введите \"/play\"" +
-            "\nЧтобы вывести справку, введите \"help\"";
+            "\nЧтобы вывести справку, введите \"/help\"";
     String[] partsOfSpeech = {
-            "noun(существительное)",
+            "noun (существительное)",
             "verb (глагол)",
             "adjectives (прилагательное)",
-            "adverb(наречие)",
-            "pretext(предлоги)",
-            "conjuction(союзы)"
+            "adverb (наречие)",
+            "pretext (предлоги)",
+            "conjuction (союзы)"
     };
 
     public String getChoose(String[] array) {
@@ -33,10 +33,10 @@ public class ChatBot {
                 case "partOfSpeech":
                     players.get(id).partOfSpeech = partsOfSpeech[Integer.parseInt(message) - 1];
                     players.get(id).lastProgramMessage = "theme";
-                    players.get(id).themes = (HashMap<String, ArrayList<String>>) glossary.getThemes(glossary.getUrl(players.get(id).partOfSpeech));
+                    players.get(id).themes = (HashMap<String, ArrayList<String[]>>) glossary.getThemes(glossary.getUrl(players.get(id).partOfSpeech));
                     return "Выберите тему:\n" + getChoose(players.get(id).themes.keySet().toArray(String[]::new));
                 case "theme":
-                    players.get(id).theme = (String) glossary.getThemes(glossary.getUrl(players.get(id).partOfSpeech)).keySet().toArray()[Integer.parseInt(message)];
+                    players.get(id).theme = (String) glossary.getThemes(glossary.getUrl(players.get(id).partOfSpeech)).keySet().toArray()[Integer.parseInt(message) - 1];
                     players.get(id).lastProgramMessage = "";
                     players.get(id).currentGloss = glossary.getThemes(glossary.getUrl(players.get(id).partOfSpeech)).get(players.get(id).theme);
                     return game.play("", players.get(id));
@@ -48,7 +48,7 @@ public class ChatBot {
                     players.put(id, new Player());
                 }
                 return "Чтобы начать игру, введите \"/play\"" +
-                        "\nЧтобы вывести справку, введите \"help\"";
+                        "\nЧтобы вывести справку, введите \"/help\"";
             case "/play":
                 if (players.get(id).partOfSpeech.equals("")) {
                     players.get(id).lastProgramMessage = "partOfSpeech";
@@ -56,7 +56,7 @@ public class ChatBot {
                 }
                 if (players.get(id).theme.equals("")) {
                     players.get(id).lastProgramMessage = "theme";
-                    return "Выберите тему\n" + getChoose((String[]) glossary.getThemes(glossary.getUrl(players.get(id).partOfSpeech)).keySet().toArray());
+                    return "Выберите тему:\n" + getChoose(players.get(id).themes.keySet().toArray(String[]::new));
                 }
                 if (players.get(id).lastQuestion.equals("")) {
                     return game.play("", players.get(id));
@@ -65,15 +65,17 @@ public class ChatBot {
                     return players.get(id).lastQuestion;
             case "/help":
                 return help;
-            case "изменить часть речи":
+            case "/changespeech":
                 players.get(id).lastQuestion = "";
                 players.get(id).theme = "";
                 players.get(id).partOfSpeech = "";
+                players.get(id).lastProgramMessage = "partOfSpeech";
                 return "Выберите часть речи:\n" + getChoose(partsOfSpeech);
-            case "изменить тему":
+            case "/changetheme":
                 players.get(id).lastQuestion = "";
                 players.get(id).theme = "";
-                return "Выберите тему\n" + getChoose((String[]) glossary.getThemes(glossary.getUrl(players.get(id).partOfSpeech)).keySet().toArray());
+                players.get(id).lastProgramMessage = "theme";
+                return "Выберите тему:\n" + getChoose(players.get(id).themes.keySet().toArray(String[]::new));
             default:
                 if (id.equals(""))
                     return "Чтобы начать игру, введите \"/play\"";

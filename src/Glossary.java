@@ -15,12 +15,12 @@ public class Glossary {
         String end = "&single=true&output=csv";
         String middle = "";
         switch (message){
-            case "verb": middle = "1824750361"; break;
-            case "adjectives": middle = "15517525"; break;
-            case "adverb": middle = "1049149030"; break;
-            case "pretext": middle = "1125540101"; break;
-            case "conjuction": middle = "871500860"; break;
-            default: middle = "893384538"; break;
+            case "noun (существительное)": middle = "893384538"; break;
+            case "verb (глагол)": middle = "1824750361"; break;
+            case "adjectives (прилагательное)": middle = "15517525"; break;
+            case "adverb (наречие)": middle = "1049149030"; break;
+            case "pretext (предлоги)": middle = "1125540101"; break;
+            case "conjuction (союзы)": middle = "871500860"; break;
         }
         return new URL(begin + middle + end);
     }

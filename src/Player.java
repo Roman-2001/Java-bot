@@ -11,7 +11,7 @@ public class Player {
     String lastProgramMessage;
     ArrayList<String[]> currentGloss;
     Integer lastNumber;
-    HashMap<String, ArrayList<String>> themes;
+    HashMap<String, ArrayList<String[]>> themes;
 
     Player(){
         this.point = 0;
