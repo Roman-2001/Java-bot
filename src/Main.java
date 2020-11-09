@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main extends TelegramLongPollingBot {
@@ -23,7 +24,12 @@ public class Main extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         String message = update.getMessage().getText();
-        String res = chatBot.getMessage(message, update.getMessage().getChatId().toString());
+        String res = null;
+        try {
+            res = chatBot.getMessage(message, update.getMessage().getChatId().toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         sendMsg(update.getMessage().getChatId().toString(), res);
     }
 

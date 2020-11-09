@@ -2,7 +2,9 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,38 +25,34 @@ public class Glossary {
         return new URL(begin + middle + end);
     }
 
-    public static HashMap<String, HashMap<String, String>> getThemes(URL doc) throws IOException {
-        HashMap<String, HashMap<String,String>> themes = new HashMap<>();
+    public HashMap<String, ArrayList<String[]>> getThemes(URL doc) throws IOException {
+        HashMap<String, ArrayList<String[]>> themes = new HashMap<>();
         URLConnection b = doc.openConnection();
         BufferedReader c = new BufferedReader(new InputStreamReader(b.getInputStream()));
         Pattern tm = Pattern.compile(".*,,");
-        Pattern rus = Pattern.compile(" ,+");
-        Pattern eng = Pattern.compile(",\\[+");
         String str = "";
+        String[] arr = null;
         String theme = "";
-        String temp = "";
-        HashMap<String, String> tempGloss = new HashMap<>();
-        String r = "";
-        String e = "";
+        String tempTheme = "";
+        ArrayList<String[]> tempGloss = new ArrayList<>();
         while ((str = c.readLine()) != null){
             Matcher matcher = tm.matcher(str);
             if (matcher.matches()){
-                theme = temp;
+                theme = tempTheme;
                 if (!(theme.equals(""))){
                     themes.put(theme, tempGloss);
-                    tempGloss = new HashMap<>();
+                    tempGloss = new ArrayList<>();
                 }
-                temp = str.substring(0, matcher.end()-2);
+                tempTheme = str.substring(0, matcher.end()-2);
             }
             else {
-                Matcher mrus = rus.matcher(str);
-                Matcher meng = eng.matcher(str);
-                if (mrus.matches()) r = str.substring(mrus.end()+2, str.length());
-                if (meng.matches()) e = str.substring(0, meng.start());
-                tempGloss.put(r, e);
+                arr = str.split(",");
+                if (arr.length == 3){
+                    tempGloss.add(new String[]{arr[2], arr[0]});
+                }
             }
         }
-        themes.put(temp, tempGloss);
+        themes.put(tempTheme, tempGloss);
         return themes;
     }
 }
