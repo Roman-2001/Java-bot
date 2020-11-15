@@ -6,22 +6,20 @@ public class Player {
     Integer point;
     String expectedAnswer;
     String lastQuestion;
-    String partOfSpeech;
+    Integer indexPartOfSpeech;
     String theme;
     String lastProgramMessage;
     ArrayList<String[]> currentGloss;
     Integer lastNumber;
-    HashMap<String, ArrayList<String[]>> themes;
 
     Player(){
         this.point = 0;
         this.expectedAnswer = "";
         this.lastQuestion = "";
         this.theme = "";
-        this.partOfSpeech = "";
+        this.indexPartOfSpeech = -1;
         this.lastProgramMessage = "";
         this.currentGloss = new ArrayList<String[]>();
         this.lastNumber = -1;
-        this.themes = new HashMap<>();
     }
 }

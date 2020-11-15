@@ -9,7 +9,7 @@ public class Game {
             if (message.equals(player.expectedAnswer)) {
                 player.point += 1;
                 result = "Перевод верный\n";
-                player.currentGloss.remove(player.lastNumber);
+                player.currentGloss.remove(player.currentGloss.get(player.lastNumber));
             }
             else {
                 result = "Перевод неверный\n";
@@ -24,11 +24,8 @@ public class Game {
         player.lastNumber = random.nextInt(gloss.size());
         String[] arrStr = (String[]) gloss.get(player.lastNumber);
         player.lastQuestion = arrStr[0];
-        player.expectedAnswer = arrStr[1];
+        player.expectedAnswer = arrStr[1].toLowerCase();
         return result +"счёт:" + player.point + "\n\n" + player.lastQuestion;
-
-        //getClass().getResource() - чтение данных из файла
-        //подключить через googledoc.
     }
 
 }
