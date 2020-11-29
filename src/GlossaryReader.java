@@ -12,46 +12,51 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class Glossary {
-    HashMap<String, ArrayList<String[]>> fullGlossary[];
-    HashMap<String, ArrayList<String[]>> nouns;
-    HashMap<String, ArrayList<String[]>> verbs;
-    HashMap<String, ArrayList<String[]>> adjectives;
-    HashMap<String, ArrayList<String[]>> adverbs;
-    HashMap<String, ArrayList<String[]>> pretexts;
-    HashMap<String, ArrayList<String[]>> conjuctions;
-    Glossary() {
+public class GlossaryReader {
+    PartOfSpeech nouns;
+    PartOfSpeech verbs;
+    PartOfSpeech adjectives;
+    PartOfSpeech adverbs;
+    PartOfSpeech pretexts;
+    PartOfSpeech conjuctions;
+    GlossaryReader() {
         try {
             nouns = getThemes(getUrl("nouns"));
         } catch (IOException e) {
+            System.out.println("Exception in nouns");
             e.printStackTrace();
         }
         try {
             verbs = getThemes(getUrl("verbs"));
         } catch (IOException e) {
+            System.out.println("Exception in verbs");
             e.printStackTrace();
         }
         try {
             adjectives = getThemes(getUrl("adjectives"));
         } catch (IOException e) {
+            System.out.println("Exception in adj.");
             e.printStackTrace();
         }
         try {
             adverbs = getThemes(getUrl("adverbs"));
         } catch (IOException e) {
+            System.out.println("Exception in adverbs");
             e.printStackTrace();
         }
         try {
             pretexts = getThemes(getUrl("pretexts"));
         } catch (IOException e) {
+            System.out.println("Exception in pretexts");
             e.printStackTrace();
         }
         try {
             conjuctions = getThemes(getUrl("conjunctions"));
         } catch (IOException e) {
+            System.out.println("Exception in conj.");
             e.printStackTrace();
         }
-        fullGlossary = new HashMap[]{nouns, verbs, adjectives, adverbs, pretexts, conjuctions};
+        //fullGlossary = new Glossary[]{nouns, verbs, adjectives, adverbs, pretexts, conjuctions};
     }
     private URL getUrl(String partOfSpeech) throws MalformedURLException {
         String begin = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ02zFoTmSVTeZD8SZ24ocWAVhKbTjn2qlVXyJsK5kFMns06nFzcd9d4yLnqcsKig/pub?gid=";
@@ -68,36 +73,38 @@ public class Glossary {
         return new URL(begin + middle + end);
     }
 
-    private HashMap<String, ArrayList<String[]>> getThemes(URL doc) throws IOException {
-        HashMap<String, ArrayList<String[]>> themes = new HashMap<>();
+    private PartOfSpeech getThemes(URL doc) throws IOException {
+        PartOfSpeech themes = new PartOfSpeech();
+        Vocabulary tempGloss = new Vocabulary();
+
         URLConnection b = doc.openConnection();
         BufferedReader c = new BufferedReader(new InputStreamReader(b.getInputStream()));
         Pattern tm = Pattern.compile(".*,,");
         String str = "";
-        String[] arr = null;
+        String[] arr = new String[2];
         String theme = "";
         String tempTheme = "";
-        ArrayList<String[]> tempGloss = new ArrayList<>();
         while ((str = c.readLine()) != null){
+            Words wordAndTanslate = new Words();
             Matcher matcher = tm.matcher(str);
             if (matcher.matches()){
                 theme = tempTheme;
                 if (!(theme.equals(""))){
-                    themes.put(theme, tempGloss);
-                    tempGloss = new ArrayList<>();
+                    themes.partOfSpeech.put(theme, tempGloss);
+                    tempGloss = new Vocabulary();
                 }
                 tempTheme = str.substring(0, matcher.end()-2);
             }
             else {
                 arr = str.split(",");
-                if (arr.length == 3){
-                    if (arr[0].split("\\(")[0].equals(arr[0]))
-                        tempGloss.add(new String[]{arr[2], arr[0]});
-                    else tempGloss.add(new String[]{arr[2], arr[0].split(" ")[0]});
+                if (arr.length == 3) {
+                    wordAndTanslate.enWord = arr[0].split(" \\(")[0];
+                    wordAndTanslate.ruWord = arr[2];
+                    tempGloss.vocabulary.add(wordAndTanslate);
                 }
             }
         }
-        themes.put(tempTheme, tempGloss);
+        themes.partOfSpeech.put(tempTheme, tempGloss);
         return themes;
     }
 }
