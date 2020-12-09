@@ -2,9 +2,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PartOfSpeech extends HashMap{
-    HashMap<String, Vocabulary> partOfSpeech;
+    HashMap<String, Vocabulary> partOfSpeechVocabulary;
+    String name;
 
     PartOfSpeech() {
-        this.partOfSpeech = new HashMap<>();
+        this.name = "";
+        this.partOfSpeechVocabulary = new HashMap<>();
     }
 }

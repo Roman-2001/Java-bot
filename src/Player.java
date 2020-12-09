@@ -8,9 +8,9 @@ public class Player {
     Integer indexPartOfSpeech;
     String theme;
     enum LastProgramMessage {
-        PARTOFSPEECH,
-        THEME,
-        GAME
+        WAITPARTOFSPEECH,
+        WAITTHEME,
+        PLAYGAME
     }
     LastProgramMessage lastProgramMessage;
     ArrayList<Words> wordsToShow;
@@ -22,7 +22,7 @@ public class Player {
         this.lastQuestion = "";
         this.theme = "";
         this.indexPartOfSpeech = -1;
-        this.wordsToShow = new Vocabulary().vocabulary;
+        this.wordsToShow = new Vocabulary().vocabularyTheme;
         this.lastNumber = -1;
     }
 

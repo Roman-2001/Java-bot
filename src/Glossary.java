@@ -12,51 +12,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class GlossaryReader {
-    PartOfSpeech nouns;
-    PartOfSpeech verbs;
-    PartOfSpeech adjectives;
-    PartOfSpeech adverbs;
-    PartOfSpeech pretexts;
-    PartOfSpeech conjuctions;
-    GlossaryReader() {
+public class Glossary {
+    ArrayList<PartOfSpeech> fullGlossary = new ArrayList<>();
+    Glossary() {
+        FillingGlossary(fullGlossary, "nouns", 0);
+        FillingGlossary(fullGlossary, "verbs", 1);
+        FillingGlossary(fullGlossary, "adjectives", 2);
+        FillingGlossary(fullGlossary, "adverbs", 3);
+        FillingGlossary(fullGlossary, "pretexts", 4);
+        FillingGlossary(fullGlossary, "conjunctions", 5);
+        if (fullGlossary.size() == 0){
+            throw new NullPointerException("Glossary is empty");
+        }
+    }
+    private void FillingGlossary(ArrayList<PartOfSpeech> fullGlossary, String name, int index){
         try {
-            nouns = getThemes(getUrl("nouns"));
+            fullGlossary.add(getThemes(getUrl(name)));
+            fullGlossary.get(index).name = name;
         } catch (IOException e) {
-            System.out.println("Exception in nouns");
+            fullGlossary.remove(fullGlossary.get(index));
             e.printStackTrace();
         }
-        try {
-            verbs = getThemes(getUrl("verbs"));
-        } catch (IOException e) {
-            System.out.println("Exception in verbs");
-            e.printStackTrace();
-        }
-        try {
-            adjectives = getThemes(getUrl("adjectives"));
-        } catch (IOException e) {
-            System.out.println("Exception in adj.");
-            e.printStackTrace();
-        }
-        try {
-            adverbs = getThemes(getUrl("adverbs"));
-        } catch (IOException e) {
-            System.out.println("Exception in adverbs");
-            e.printStackTrace();
-        }
-        try {
-            pretexts = getThemes(getUrl("pretexts"));
-        } catch (IOException e) {
-            System.out.println("Exception in pretexts");
-            e.printStackTrace();
-        }
-        try {
-            conjuctions = getThemes(getUrl("conjunctions"));
-        } catch (IOException e) {
-            System.out.println("Exception in conj.");
-            e.printStackTrace();
-        }
-        //fullGlossary = new Glossary[]{nouns, verbs, adjectives, adverbs, pretexts, conjuctions};
     }
     private URL getUrl(String partOfSpeech) throws MalformedURLException {
         String begin = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ02zFoTmSVTeZD8SZ24ocWAVhKbTjn2qlVXyJsK5kFMns06nFzcd9d4yLnqcsKig/pub?gid=";
@@ -90,7 +66,7 @@ public class GlossaryReader {
             if (matcher.matches()){
                 theme = tempTheme;
                 if (!(theme.equals(""))){
-                    themes.partOfSpeech.put(theme, tempGloss);
+                    themes.partOfSpeechVocabulary.put(theme, tempGloss);
                     tempGloss = new Vocabulary();
                 }
                 tempTheme = str.substring(0, matcher.end()-2);
@@ -100,11 +76,11 @@ public class GlossaryReader {
                 if (arr.length == 3) {
                     wordAndTanslate.enWord = arr[0].split(" \\(")[0];
                     wordAndTanslate.ruWord = arr[2];
-                    tempGloss.vocabulary.add(wordAndTanslate);
+                    tempGloss.vocabularyTheme.add(wordAndTanslate);
                 }
             }
         }
-        themes.partOfSpeech.put(tempTheme, tempGloss);
+        themes.partOfSpeechVocabulary.put(tempTheme, tempGloss);
         return themes;
     }
 }

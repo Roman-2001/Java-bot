@@ -1,9 +1,9 @@
 import java.util.ArrayList;
 
 public class Vocabulary extends ArrayList {
-    ArrayList<Words> vocabulary;
+    ArrayList<Words> vocabularyTheme;
     Vocabulary(){
-        this.vocabulary = new ArrayList<>();
+        this.vocabularyTheme = new ArrayList<>();
     }
 
 

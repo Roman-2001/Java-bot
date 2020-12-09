@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -6,18 +7,18 @@ public class ChatBot {
     String help = "Я бот, умею выдавать русское слово,\nполучать перевод слова на английском " +
             "и оценивать корректность перевода\nЧтобы начать игру, введите \"/play\"" +
             "\nЧтобы вывести справку, введите \"/help\"";
-    String[] partsOfSpeech = new String[]{
-            "nouns (существительные)",
-            "verbs (глаголы)",
-            "adjectives (прилагательные)",
-            "adverbs (наречия)",
-            "pretexts (предлоги)",
-            "conjunctions (союзы)"
-    };
-    GlossaryReader fullGlossary = new GlossaryReader();
-    HashMap<String, Vocabulary> glossary = fullGlossary.nouns.partOfSpeech;
+    ArrayList<PartOfSpeech> fullGlossary = new Glossary().fullGlossary;
+    HashMap<String, Vocabulary> glossary = fullGlossary.get(0).partOfSpeechVocabulary;
 
-    private String getChoose(String[] array) {
+
+    private String getChoosePartOfSpeech(ArrayList<PartOfSpeech> fullGlossary){
+        String res = "";
+        for (int i=1; i<=fullGlossary.size(); i++) {
+            res += i + ")" + fullGlossary.get(i-1).name + "\n";
+        }
+        return res;
+    }
+    private String getChooseTheme(String[] array) {
         String res = "";
         for (int i = 1; i <= array.length; i++) {
             res += i + ")" + array[i - 1] + "\n";
@@ -39,11 +40,11 @@ public class ChatBot {
         switch (message) {
             case "/play":
                 if (player.indexPartOfSpeech == -1) {
-                    player.lastProgramMessage = Player.LastProgramMessage.PARTOFSPEECH;
-                    return "Выберите номер части речи:\n" + getChoose(partsOfSpeech);
+                    player.lastProgramMessage = Player.LastProgramMessage.WAITPARTOFSPEECH;
+                    return "Выберите номер части речи:\n" + getChoosePartOfSpeech(fullGlossary);
                 }
                 if (player.theme.equals("")) {
-                    player.lastProgramMessage = Player.LastProgramMessage.PARTOFSPEECH;
+                    player.lastProgramMessage = Player.LastProgramMessage.WAITPARTOFSPEECH;
                     return getMessage(index.toString(), id);
                 }
                 if (player.lastQuestion.equals("")) {
@@ -56,57 +57,30 @@ public class ChatBot {
                 player.lastQuestion = "";
                 player.theme = "";
                 player.indexPartOfSpeech = -1;
-                player.lastProgramMessage = Player.LastProgramMessage.PARTOFSPEECH;
-                fullGlossary = new GlossaryReader();
-                return "Выберите номер части речи:\n" + getChoose(partsOfSpeech);
+                player.lastProgramMessage = Player.LastProgramMessage.WAITPARTOFSPEECH;
+                fullGlossary = new Glossary().fullGlossary;
+                return "Выберите номер части речи:\n" + getChoosePartOfSpeech(fullGlossary);
             case "/changetheme":
                 player.lastQuestion = "";
                 player.theme = "";
-                player.lastProgramMessage = Player.LastProgramMessage.PARTOFSPEECH;
-                fullGlossary = new GlossaryReader();
+                player.lastProgramMessage = Player.LastProgramMessage.WAITPARTOFSPEECH;
+                fullGlossary = new Glossary().fullGlossary;
                 return getMessage(index.toString(), id);
-            default:
-                break;
         }
         switch (player.lastProgramMessage) {
-            case PARTOFSPEECH:
+            case WAITPARTOFSPEECH:
                 player.indexPartOfSpeech = Integer.parseInt(message) - 1;
-                String partOfSpeech = partsOfSpeech[player.indexPartOfSpeech].split(" ")[0];
-                player.lastProgramMessage = Player.LastProgramMessage.THEME;
-                switch (partOfSpeech){
-                    case "verbs":
-                        glossary = fullGlossary.verbs.partOfSpeech;
-                        break;
-                    case "adjectives":
-                        glossary = fullGlossary.adjectives.partOfSpeech;
-                        break;
-                    case "adverbs":
-                        glossary = fullGlossary.adverbs.partOfSpeech;
-                        break;
-                    case "pretexts":
-                        glossary = fullGlossary.pretexts.partOfSpeech;
-                        break;
-                    case "conjunctions":
-                        glossary = fullGlossary.conjuctions.partOfSpeech;
-                        break;
-                    case "nouns":
-                        glossary = fullGlossary.nouns.partOfSpeech;
-                        break;
-                    default: break;
-                }
-                return "Выберите номер темы:\n" + getChoose(glossary.keySet().toArray(String[]::new));
-            case THEME:
-                player.lastProgramMessage = Player.LastProgramMessage.GAME;
+                glossary = fullGlossary.get(player.indexPartOfSpeech).partOfSpeechVocabulary;
+                player.lastProgramMessage = Player.LastProgramMessage.WAITTHEME;
+                return "Выберите номер темы:\n" + getChooseTheme(glossary.keySet().toArray(String[]::new));
+            case WAITTHEME:
+                player.lastProgramMessage = Player.LastProgramMessage.PLAYGAME;
                 int indexTheme = Integer.parseInt(message) - 1;
                 player.theme = (String) glossary.keySet().toArray()[indexTheme];
-                player.wordsToShow = new ArrayList<>(glossary.get(player.theme).vocabulary);
+                player.wordsToShow = new ArrayList<>(glossary.get(player.theme).vocabularyTheme);
                 return player.PlayGame("");
-            case GAME:
-                if (id.equals(""))
-                    return "Чтобы начать игру, введите \"/start\"";
-                else {
+            case PLAYGAME:
                     return player.PlayGame(message);
-                }
             default:
                 return "Ой, что-то пошло не так";
         }
