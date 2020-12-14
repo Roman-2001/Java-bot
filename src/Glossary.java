@@ -15,38 +15,29 @@ import java.util.regex.Pattern;
 public class Glossary {
     ArrayList<PartOfSpeech> fullGlossary = new ArrayList<>();
     Glossary() {
-        FillingGlossary(fullGlossary, "nouns", 0);
-        FillingGlossary(fullGlossary, "verbs", 1);
-        FillingGlossary(fullGlossary, "adjectives", 2);
-        FillingGlossary(fullGlossary, "adverbs", 3);
-        FillingGlossary(fullGlossary, "pretexts", 4);
-        FillingGlossary(fullGlossary, "conjunctions", 5);
+        FillGlossary(fullGlossary, "nouns", "893384538");
+        FillGlossary(fullGlossary, "verbs", "1824750361");
+        FillGlossary(fullGlossary, "adjectives", "15517525");
+        FillGlossary(fullGlossary, "adverbs", "1049149030");
+        FillGlossary(fullGlossary, "pretexts", "1125540101");
+        FillGlossary(fullGlossary, "conjunctions", "871500860");
         if (fullGlossary.size() == 0){
             throw new NullPointerException("Glossary is empty");
         }
     }
-    private void FillingGlossary(ArrayList<PartOfSpeech> fullGlossary, String name, int index){
+    private void FillGlossary(ArrayList<PartOfSpeech> fullGlossary, String name, String pageInDocument){
         try {
-            fullGlossary.add(getThemes(getUrl(name)));
-            fullGlossary.get(index).name = name;
+            fullGlossary.add(getThemes(getUrl(pageInDocument)));
+            fullGlossary.get(fullGlossary.size()-1).name = name;
         } catch (IOException e) {
-            fullGlossary.remove(fullGlossary.get(index));
+            fullGlossary.remove(fullGlossary.get(fullGlossary.size()-1));
             e.printStackTrace();
         }
     }
     private URL getUrl(String partOfSpeech) throws MalformedURLException {
         String begin = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ02zFoTmSVTeZD8SZ24ocWAVhKbTjn2qlVXyJsK5kFMns06nFzcd9d4yLnqcsKig/pub?gid=";
         String end = "&single=true&output=csv";
-        String middle = "";
-        switch (partOfSpeech){
-            case "nouns": middle = "893384538"; break;
-            case "verbs": middle = "1824750361"; break;
-            case "adjectives": middle = "15517525"; break;
-            case "adverbs": middle = "1049149030"; break;
-            case "pretexts": middle = "1125540101"; break;
-            case "conjunctions": middle = "871500860"; break;
-        }
-        return new URL(begin + middle + end);
+        return new URL(begin + partOfSpeech + end);
     }
 
     private PartOfSpeech getThemes(URL doc) throws IOException {

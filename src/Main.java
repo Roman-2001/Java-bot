@@ -6,6 +6,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class Main extends TelegramLongPollingBot {
     private ChatBot chatBot = new ChatBot();
@@ -23,8 +26,22 @@ public class Main extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         String message = update.getMessage().getText();
         String res = null;
-        res = chatBot.getMessage(message, update.getMessage().getChatId().toString());
-        sendMsg(update.getMessage().getChatId().toString(), res);
+        String id = update.getMessage().getChatId().toString();
+        res = chatBot.getMessage(message, id);
+        sendMsg(id, res);
+        Player player = chatBot.players.get(id);
+        if (player.lastProgramMessage == Player.LastProgramMessage.WAITBATTLE) {
+            res = String.format("Хотите сразиться в битве с %s?\n/yes_%s\n/no", id, id);
+            for (String playerID : chatBot.players.keySet()) {
+                if (!(playerID.equals(id)))
+                    sendMsg(playerID, res);
+            }
+        }
+        if (!player.opponentID.equals(""))
+            if (chatBot.players.get(player.opponentID).opponentID.equals("")) {
+                res = chatBot.getMessage(id, player.opponentID);
+                sendMsg(player.opponentID, res);
+            }
     }
 
     public synchronized void sendMsg(String chatId, String s) {
