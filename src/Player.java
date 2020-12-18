@@ -71,9 +71,9 @@ public class Player {
         if (!message.equals("")) {
             if (message.equals(expectedAnswer)) {
                 pointForBattle += 1;
-                result = "Верно!\n" + "счёт:" + point + "\n\n";
+                result = "Верно!\n" + "счёт:" + pointForBattle + "\n\n";
             } else {
-                result = "Неверно\n" + "счёт:" + point + "\n\n";
+                result = "Неверно\n" + "счёт:" + pointForBattle + "\n\n";
                 health -= 1;
             }
             deleteWord();

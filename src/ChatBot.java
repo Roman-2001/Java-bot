@@ -40,7 +40,7 @@ public class ChatBot {
         message = message.toLowerCase();
         Player player = players.get(id);
         Integer index = player.indexPartOfSpeech + 1;
-        switch (message.split("_")[0]) {
+        switch (message.split(":")[0]) {
             case "/play":
                 if (player.indexPartOfSpeech == -1) {
                     player.lastProgramMessage = Player.LastProgramMessage.WAITPARTOFSPEECH;
@@ -74,10 +74,10 @@ public class ChatBot {
                 player.lastProgramMessage = Player.LastProgramMessage.WAITPARTOFSPEECH;
                 return getChoosePartOfSpeech();
             case "/yes":
-                if (!(players.get(message.split("_")[1]).opponentID.equals("")))
+                if (!(players.get(message.split(":")[1]).opponentID.equals("")))
                     return "Пользователь уже играет\n" + help;
-                player.opponentID = message.split("_")[1];
-                player.wordsToShow = players.get(player.opponentID).wordsToShow;
+                player.opponentID = message.split(":")[1];
+                player.wordsToShow = new ArrayList<>(players.get(player.opponentID).wordsToShow);
                 //players.get(player.opponentID).opponentID = id;
                 player.fight = true;
                 player.lastProgramMessage = Player.LastProgramMessage.WAITBATTLE;
@@ -104,13 +104,15 @@ public class ChatBot {
             case PLAYGAME:
                 return player.playGame(message);
             case WAITBATTLE:
-                player.opponentID = message;
-                if (!players.containsKey(player.opponentID))
+                player.opponentID = message.split(":")[1];
+                if (!players.containsKey(player.opponentID)) {
+                    player.opponentID = "";
                     return "Ожидайте";
+                }
                 player.lastProgramMessage = Player.LastProgramMessage.FIGHTBATTLE;
-                return "Соперник найден! Начинается игра!\n" + player.fight("");
+                return "Соперник найден! Начинается игра!\n" + player.opponentID + player.fight("");
             case FIGHTBATTLE:
-                return "Счёт соперника:" + players.get(player.opponentID).pointForBattle + player.fight(message);
+                return "Счёт соперника:" + players.get(player.opponentID).pointForBattle + "\n" + player.fight(message);
             default:
                 return "Ой, что-то пошло не так";
         }

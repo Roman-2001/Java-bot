@@ -31,7 +31,7 @@ public class Main extends TelegramLongPollingBot {
         sendMsg(id, res);
         Player player = chatBot.players.get(id);
         if (player.lastProgramMessage == Player.LastProgramMessage.WAITBATTLE) {
-            res = String.format("Хотите сразиться в битве с %s?\n/yes_%s\n/no", id, id);
+            res = String.format("Хотите сразиться в битве с %s?\n/yes:%s\n/no", id, id);
             for (String playerID : chatBot.players.keySet()) {
                 if (!(playerID.equals(id)))
                     sendMsg(playerID, res);
@@ -39,7 +39,7 @@ public class Main extends TelegramLongPollingBot {
         }
         if (!player.opponentID.equals(""))
             if (chatBot.players.get(player.opponentID).opponentID.equals("")) {
-                res = chatBot.getMessage(id, player.opponentID);
+                res = chatBot.getMessage("go:" + id, player.opponentID);
                 sendMsg(player.opponentID, res);
             }
     }
