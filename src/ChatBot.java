@@ -28,6 +28,13 @@ public class ChatBot {
         }
         return res;
     }
+    public String findWinner(Player player){
+        if (player.pointForBattle > players.get(player.opponentID).pointForBattle)
+            return "Вы победили! Поздравляем!";
+        if (player.pointForBattle < players.get(player.opponentID).pointForBattle)
+            return "Победил соперник. В следующий раз Вы победите!";
+        return "Вы с соперником знаете эту тему одинаково хорошо. Ничья!";
+    }
 
     public String getMessage(String message, String id) {
         if (message.equals("/start")) {
@@ -35,7 +42,8 @@ public class ChatBot {
                 players.put(id, new Player());
             }
             return "Чтобы начать игру, введите \"/play\"" +
-                    "\nЧтобы вывести справку, введите \"/help\"";
+                    "\nЧтобы вывести справку, введите \"/help\"\n" +
+                    "Чтобы сразиться с другим игроком, введите \"/fight\"";
         }
         message = message.toLowerCase();
         Player player = players.get(id);
@@ -110,9 +118,19 @@ public class ChatBot {
                     return "Ожидайте";
                 }
                 player.lastProgramMessage = Player.LastProgramMessage.FIGHTBATTLE;
-                return "Соперник найден! Начинается игра!\n" + player.opponentID + player.fight("");
+                return "Соперник найден! Начинается игра!\n" + player.fight("");
             case FIGHTBATTLE:
-                return "Счёт соперника:" + players.get(player.opponentID).pointForBattle + "\n" + player.fight(message);
+                String result = "";
+                if (player.lastNumber != -1)
+                    result += "Счёт соперника:" + players.get(player.opponentID).pointForBattle + "\n" + player.fight(message) + "\n";
+                if (!player.fight)
+                    if (!players.get(player.opponentID).fight) {
+                        result += findWinner(player);
+                        player.lastProgramMessage = null;
+                    }
+                    else
+                        result += "Ваши попытки закончились\nИдёт подсчёт результатов\nОжидайте";
+                return result;
             default:
                 return "Ой, что-то пошло не так";
         }

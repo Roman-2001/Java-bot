@@ -71,15 +71,16 @@ public class Player {
         if (!message.equals("")) {
             if (message.equals(expectedAnswer)) {
                 pointForBattle += 1;
-                result = "Верно!\n" + "счёт:" + pointForBattle + "\n\n";
+                result = "Верно!\n" + "Ваш счёт:" + pointForBattle + "\n\n";
             } else {
-                result = "Неверно\n" + "счёт:" + pointForBattle + "\n\n";
+                result = "Неверно\n" + "Ваш счёт:" + pointForBattle + "\n\n";
                 health -= 1;
             }
             deleteWord();
         }
-        if (wordsToShow.size() == 0) {
+        if (wordsToShow.size() == 0 || health == 0) {
             lastNumber = -1;
+            fight = false;
             return result;
         }
         lastNumber = wordsToShow.size()-1;

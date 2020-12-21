@@ -37,11 +37,30 @@ public class Main extends TelegramLongPollingBot {
                     sendMsg(playerID, res);
             }
         }
-        if (!player.opponentID.equals(""))
-            if (chatBot.players.get(player.opponentID).opponentID.equals("")) {
+
+
+
+        if (!player.opponentID.equals("")) {
+            Player opponent = chatBot.players.get(player.opponentID);
+            if (opponent.opponentID.equals("")) {
                 res = chatBot.getMessage("go:" + id, player.opponentID);
                 sendMsg(player.opponentID, res);
             }
+            if (!(player.fight || opponent.fight)) {
+                sendMsg(player.opponentID, chatBot.findWinner(opponent));
+                finishBattle(player);
+                finishBattle(opponent);
+            }
+            if (Math.abs(player.pointForBattle - opponent.pointForBattle) >= 5 ||
+                    (!opponent.fight && (player.pointForBattle > opponent.pointForBattle)) ||
+                    (!player.fight && player.pointForBattle < opponent.pointForBattle))
+            {
+                sendMsg(opponent.opponentID, chatBot.findWinner(player));
+                sendMsg(player.opponentID, chatBot.findWinner(opponent));
+                finishBattle(player);
+                finishBattle(opponent);
+            }
+        }
     }
 
     public synchronized void sendMsg(String chatId, String s) {
@@ -54,6 +73,14 @@ public class Main extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    private void finishBattle(Player player){
+        player.opponentID = "";
+        player.lastProgramMessage = null;
+        player.fight = false;
+        player.pointForBattle = 0;
+        player.health = 3;
     }
 
     @Override
